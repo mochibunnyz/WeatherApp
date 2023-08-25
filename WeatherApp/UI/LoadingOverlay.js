@@ -1,8 +1,9 @@
-import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { ActivityIndicator, View, StyleSheet, Text } from "react-native";
 
 
 function LoadingOverlay(){
     return <View style={styles.container}>
+        <Text>This will take a while, Please be patient</Text>
         <ActivityIndicator size="large" color="#2d0689"/>
     </View>
 }
