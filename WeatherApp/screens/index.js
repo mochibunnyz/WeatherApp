@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet,ScrollView, SafeAreaView, Image, ImageBackground} from 'react-native';
+import {View, Text, StyleSheet,ScrollView, SafeAreaView, Image, ImageBackground, Button} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import { apiKey } from '../keys/weatherAPIKey';
@@ -6,6 +6,8 @@ import ErrorOverlay from '../UI/ErrorOverlay';
 import LoadingOverlay from '../UI/LoadingOverlay';
 import ExtraInfo from '../components/extraInfo';
 import HourlyForecast from '../components/HourlyForecast';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
@@ -16,17 +18,37 @@ const Weather = () =>{
     const [errorMsg, setErrorMsg] = useState(null);
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [hourlyData, setHourlyData] = useState([]);
-
+    //const [showHourlyForecast, setShowHourlyForecast] = useState(false);
+    
+    
+      
     
 
     useEffect(()=>{
+        // Retrieve location data from AsyncStorage
+        
         (async()=>{
             let{status} = await Location.requestForegroundPermissionsAsync();
             if(status !== 'granted'){
                 setErrorMsg("Permission Denied");
                 return;
             }
-            let loc = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+            //get location data from async
+            const savedLocationData = await AsyncStorage.getItem('locationData');
+            if (savedLocationData) {
+              // If location data is found in AsyncStorage, parse and set it
+              setLocation(JSON.parse(savedLocationData));
+              console.log("current weather data retrieved from async")
+            } 
+            /* const savedHourlyData = await AsyncStorage.getItem('HourlyData');
+            if (savedHourlyData) {
+                // If hourly data is found in AsyncStorage, parse and set it
+                setHourlyData(JSON.parse(savedHourlyData));
+                console.log("Hourly data retrieved from async")
+            }  */
+            setBackgroundImage(require('../assets/Images/clear.jpg'));
+
+            loc = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
             
             fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${apiKey}&units=metric`,{
                 method:'POST',
@@ -39,6 +61,8 @@ const Weather = () =>{
             .then((json) =>{
                 console.log(json);
                 setLocation(json);
+                // After setting location data in state, save it to AsyncStorage
+                AsyncStorage.setItem('locationData', JSON.stringify(json));
                 // Determine the background image based on weather condition
                 const weatherCondition = json.weather[0].main.toLowerCase();
                 switch (weatherCondition) {
@@ -68,7 +92,7 @@ const Weather = () =>{
                       setBackgroundImage(require('../assets/Images/clear.jpg'));
                 }
 
-                 // Fetch hourly forecast data
+                // Fetch hourly forecast data
                 fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${apiKey}&units=metric`)
                 .then((response) => response.json())
                 .then((json) => {
@@ -80,6 +104,9 @@ const Weather = () =>{
                         icon: item.weather[0].icon,
                     }));
                     setHourlyData(hourlyForecastData);
+                    // After setting Hourly data in state, save it to AsyncStorage
+                    //AsyncStorage.setItem('HourlyData', JSON.stringify(json));
+                    
                 })
                 .catch((error) => {
                 console.error('Error fetching hourly forecast data:', error);
@@ -91,7 +118,9 @@ const Weather = () =>{
 
             
         })();
+        
     }, []);
+    
 
     if (errorMsg !== null){
         //set error msg alert
@@ -104,6 +133,29 @@ const Weather = () =>{
         return <LoadingOverlay/>;
     }
     
+      
+
+    /* const fetchHourlyForecast = () =>{
+        
+        // Fetch hourly forecast data
+        fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${apiKey}&units=metric`)
+        .then((response) => response.json())
+        .then((json) => {
+        // Extract the hourly forecast data
+            const hourlyForecastData = json.list.map((item) => ({
+                time: item.dt_txt,
+                temp: item.main.temp,
+                description: item.weather[0].description,
+                icon: item.weather[0].icon,
+            }));
+            setHourlyData(hourlyForecastData);
+        })
+        .catch((error) => {
+        console.error('Error fetching hourly forecast data:', error);
+        });
+        setShowHourlyForecast(true);
+    };
+     */
     
 
 
@@ -135,7 +187,14 @@ const Weather = () =>{
                     <Text style={styles.descriptionText}>{location.weather[0].description}</Text>
                 </View>
                 <ScrollView style={styles.scroll} >
+
+                    {/* Show hourly forecast button */}
+                    {/* {!showHourlyForecast && (
+                    <Button title="Show Hourly Forecast" onPress={fetchHourlyForecast} />
+                    )} */}
+
                     {/* Hourly Forecast */}
+                    {/* {showHourlyForecast &&(<HourlyForecast hourlyData={hourlyData}/>)} */}
                     <HourlyForecast hourlyData={hourlyData}/>
                     {/* Extra information */}
                     <ExtraInfo location = {location}/>
