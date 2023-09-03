@@ -11,52 +11,52 @@ const ExtraInfo = ({location}) =>{
             {/* 1st row */}
             <View style={styles.row}>
                 {/* Feels like  */}
-                <TouchableOpacity>
-                    <View style={styles.infoContainer}>
-                        <View style={styles.headerContainer}>
-                            <FontAwesome5 name="temperature-low" size={17} color="rgba(255, 255, 255, 0.6)" />
-                            <Text style={styles.header}>Feels like</Text>
-                        </View>
-                        <Text style={styles.text}>{(location.main.feels_like).toFixed(1)} °</Text>
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <FontAwesome5 name="temperature-low" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Feels like</Text>
                     </View>
-                </TouchableOpacity>
+                    <Text style={styles.text}>{(location.main.feels_like).toFixed(1)} °</Text>
+                </View>
+                
 
                 {/* Humidity  */}
-                <TouchableOpacity>
-                    <View style={styles.infoContainer}>
-                        <View style={styles.headerContainer}>
-                            <MaterialCommunityIcons name="air-humidifier" size={17} color="rgba(255, 255, 255, 0.6)" />
-                            <Text style={styles.header}>Humidity</Text>
-                        </View>
-                        <Text style={styles.text}>{location.main.humidity} %</Text>
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <MaterialCommunityIcons name="air-humidifier" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Humidity</Text>
                     </View>
-                </TouchableOpacity>
+                    <Text style={styles.text}>{location.main.humidity} %</Text>
+                </View>
+                
 
             </View>
 
             {/* 2nd row */}
             <View style={styles.row}>
                 {/* wind  */}
-                <TouchableOpacity>
-                    <View style={styles.infoContainer}>
-                        <View style={styles.headerContainer}>
-                            <FontAwesome5 name="wind" size={17} color="rgba(255, 255, 255, 0.6)" />
-                            <Text style={styles.header}>Wind</Text>
-                        </View>
-                        <Text style={styles.text}>{location.wind.speed} m/s</Text>
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <FontAwesome5 name="wind" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Wind</Text>
                     </View>
-                </TouchableOpacity>
+                    <Text style={styles.text}>{location.wind.speed} m/s</Text>
+                </View>
+                
 
                 {/* Visibility  */}
-                <TouchableOpacity>
-                    <View style={styles.infoContainer}>
-                        <View style={styles.headerContainer}>
-                            <MaterialIcons name="visibility" size={17} color="rgba(255, 255, 255, 0.6)" />
-                            <Text style={styles.header}>Visibility</Text>
-                        </View>
-                        <Text style={styles.text}>{location.visibility} km</Text>
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <MaterialIcons name="visibility" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Visibility</Text>
                     </View>
-                </TouchableOpacity>
+                    <Text style={styles.text}>{location.visibility} km</Text>
+                </View>
+                
 
             </View>
         </View>
