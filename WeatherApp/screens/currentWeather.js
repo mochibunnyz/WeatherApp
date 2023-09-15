@@ -28,6 +28,7 @@ function Weather({navigation}){
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [hourlyData, setHourlyData] = useState([]);
     const [showHourlyForecast, setShowHourlyForecast] = useState(false);
+    const [isScrolling, setIsScrolling] = useState(false); // State to track scrolling
     
     useLocalNotification();
       
@@ -132,6 +133,15 @@ function Weather({navigation}){
         //set error msg alert
         return <ErrorOverlay message={errorMsg} />;
     }
+    // Event handler for scroll
+    const handleScroll = (event) => {
+        // Check if the user is scrolling
+        if (event.nativeEvent.contentOffset.y > 0) {
+            setIsScrolling(true);
+        } else {
+            setIsScrolling(false);
+        }
+    };
 
     function ChangeBackground(weatherCondition){
         switch (weatherCondition) {
@@ -186,21 +196,24 @@ function Weather({navigation}){
                 <Text style = {styles.title}>
                     Current Weather
                 </Text>
-                <View style ={styles.currentTempContainer}>
+                <View style={isScrolling? styles.smallCurrentTempContainer:styles.currentTempContainer}>
                     <Text style={styles.locationText}>
                         {location.name}
                     </Text>
                     <View style={styles.tempContainer}>
                         <Image
                             source={{uri:`https://openweathermap.org/img/wn/${location.weather[0].icon}@2x.png`}}
-                            style={styles.bigIcon}
+                            style={isScrolling ? styles.smallIcon: styles.bigIcon}
                         />
-                        <Text style={styles.tempText}>{(location.main.temp).toFixed(1)} °C</Text>
+                        <Text style={isScrolling? styles.smallTempText: styles.tempText}>{(location.main.temp).toFixed(1)} °C</Text>
 
                     </View>
-                    <Text style={styles.descriptionText}>{location.weather[0].description}</Text>
+                    {!isScrolling &&(
+                        <Text style={styles.descriptionText}>{location.weather[0].description}</Text>
+                    )}
+                    
                 </View>
-                <ScrollView style={styles.scroll} >
+                <ScrollView style={styles.scroll} onScroll={handleScroll} scrollEventThrottle={16}>
 
                     {/* Show hourly forecast button */}
                     {!showHourlyForecast && (
@@ -215,7 +228,7 @@ function Weather({navigation}){
                     {/* Hourly Forecast */}
                     {showHourlyForecast &&(<HourlyForecast/>)}
                     
-                    <ExtraInfo location = {location}/>
+                    <ExtraInfo weatherData = {location}/>
                 </ScrollView>
                 
             </ImageBackground>
@@ -249,6 +262,15 @@ const styles = StyleSheet.create({
         marginTop:10,
         paddingHorizontal:9,
     },
+    smallCurrentTempContainer:{
+        backgroundColor:'rgba(52, 52, 52, 0.3)',
+        borderRadius:10,
+        paddingVertical:15,
+        marginTop:10,
+        paddingHorizontal:85,
+        marginBottom:10,
+        
+    },
     locationText:{
         textAlign:"center",
         fontSize:20,
@@ -261,6 +283,11 @@ const styles = StyleSheet.create({
         height:150,
         marginRight:10,
     },
+    smallIcon:{
+        width:50, 
+        height:50,
+        marginRight:10,
+    },
     tempContainer:{
         flexDirection: "row",
         justifyContent: "flex-start",
@@ -270,6 +297,12 @@ const styles = StyleSheet.create({
     },
     tempText:{
         fontSize:38,
+        fontWeight:'bold',
+        marginRight:40,
+        color:'white',
+    },
+    smallTempText:{
+        fontSize:20,
         fontWeight:'bold',
         marginRight:40,
         color:'white',
