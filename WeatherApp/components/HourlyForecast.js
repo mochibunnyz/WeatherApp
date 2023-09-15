@@ -21,10 +21,12 @@ function HourlyForecast(){
             
            
             try {
+                //get current location of user
                 const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+                //fetch data from api using current location
                 const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${apiKey}&units=metric`);
                 const json = await response.json();
-    
+                
                 const hourlyForecastData = json.list.map((item) => ({
                     time: item.dt_txt,
                     temp: item.main.temp,
@@ -41,7 +43,8 @@ function HourlyForecast(){
                     clouds: item.clouds.all,
 
                 }));
-                
+
+                //save data in HourlyData 
                 setHourlyData(hourlyForecastData);
                 
                 
@@ -54,7 +57,7 @@ function HourlyForecast(){
     }, []);
     
     
-
+    //render data 
     const renderItem = ({ item }) => (
         <TouchableOpacity 
             style={styles.hourlyItem}
