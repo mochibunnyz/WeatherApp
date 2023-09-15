@@ -8,9 +8,7 @@ import HourlyDetails from './screens/HourlyDetails';
 import HourlyForecast from './components/HourlyForecast';
 
 
-const Tab = createBottomTabNavigator();
-
-
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
