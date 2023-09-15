@@ -1,14 +1,50 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
-import { FontAwesome5,MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5,MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
+import moment from 'moment-timezone';
+import { formatSunTime } from "./time";
 
-const ExtraInfo = ({location}) =>{
+
+const ExtraInfo = ({weatherData}) =>{
+
+    
+
+    const sunriseTime = formatSunTime(weatherData.sys.sunrise, weatherData.timezone);
+    const sunsetTime = formatSunTime(weatherData.sys.sunset, weatherData.timezone);
+
+
 
     return(
         <View style={styles.extraInfoContainer}>
             <Text style={styles.title}>More Information</Text>
 
             {/* 1st row */}
+            <View style={styles.row}>
+                {/* Min Temp  */}
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <FontAwesome5 name="temperature-low" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Min. Temp</Text>
+                    </View>
+                    <Text style={styles.text}>{(weatherData.main.temp_min).toFixed(1)} °</Text>
+                </View>
+                
+
+                {/* Max temp  */}
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <FontAwesome5 name="temperature-high" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Max. Temp</Text>
+                    </View>
+                    <Text style={styles.text}>{(weatherData.main.temp_max).toFixed(1)} °</Text>
+                </View>
+                
+
+            </View>
+
+            {/* 2nd row */}
             <View style={styles.row}>
                 {/* Feels like  */}
                 
@@ -17,7 +53,7 @@ const ExtraInfo = ({location}) =>{
                         <FontAwesome5 name="temperature-low" size={17} color="rgba(255, 255, 255, 0.6)" />
                         <Text style={styles.header}>Feels like</Text>
                     </View>
-                    <Text style={styles.text}>{(location.main.feels_like).toFixed(1)} °</Text>
+                    <Text style={styles.text}>{(weatherData.main.feels_like).toFixed(1)} °</Text>
                 </View>
                 
 
@@ -28,13 +64,13 @@ const ExtraInfo = ({location}) =>{
                         <MaterialCommunityIcons name="air-humidifier" size={17} color="rgba(255, 255, 255, 0.6)" />
                         <Text style={styles.header}>Humidity</Text>
                     </View>
-                    <Text style={styles.text}>{location.main.humidity} %</Text>
+                    <Text style={styles.text}>{weatherData.main.humidity} %</Text>
                 </View>
                 
 
             </View>
 
-            {/* 2nd row */}
+            {/* 3rd row */}
             <View style={styles.row}>
                 {/* wind  */}
                 
@@ -43,7 +79,7 @@ const ExtraInfo = ({location}) =>{
                         <FontAwesome5 name="wind" size={17} color="rgba(255, 255, 255, 0.6)" />
                         <Text style={styles.header}>Wind</Text>
                     </View>
-                    <Text style={styles.text}>{location.wind.speed} m/s</Text>
+                    <Text style={styles.text}>{weatherData.wind.speed} m/s</Text>
                 </View>
                 
 
@@ -54,11 +90,39 @@ const ExtraInfo = ({location}) =>{
                         <MaterialIcons name="visibility" size={17} color="rgba(255, 255, 255, 0.6)" />
                         <Text style={styles.header}>Visibility</Text>
                     </View>
-                    <Text style={styles.text}>{location.visibility} km</Text>
+                    <Text style={styles.text}>{weatherData.visibility} km</Text>
                 </View>
                 
 
             </View>
+
+            {/* 4th row */}
+            <View style={styles.row}>
+                {/* sunrise  */}
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <Feather name="sunrise" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Sunrise</Text>
+                    </View>
+                    <Text style={styles.text}>{sunriseTime} </Text>
+                </View>
+                
+
+                {/* Sunset  */}
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <Feather name="sunset" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Sunset</Text>
+                    </View>
+                    <Text style={styles.text}>{sunsetTime}</Text>
+                </View>
+                
+
+            </View>
+
+            
         </View>
     );
 }
