@@ -37,18 +37,25 @@ function Weather({navigation}){
         
         
         (async()=>{
+            //request for permission to get location 
             let{status} = await Location.requestForegroundPermissionsAsync();
             if(status !== 'granted'){
                 setErrorMsg("Permission Denied");
                 return;
             }
+            //retrieve asyncstorage data if any
             const savedLocationData = await AsyncStorage.getItem('locationData');
             const savedBackgroundImage = await AsyncStorage.getItem('BackgroundData');
             
-            
+            //if there is savedbackground image, set it first
+            if(savedBackgroundImage){
+                let savedImage= ChangeBackground(JSON.parse(savedBackgroundImage));
+            }
 
+            //get current locatioon of user
             loc = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
             
+            //fetch data from api using current location
             fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${apiKey}&units=metric`,{
                 method:'POST',
                 headers:{
@@ -81,6 +88,7 @@ function Weather({navigation}){
                 if(json){
                     // If data is available (either from API or AsyncStorage), proceed
                     console.log(json);
+                    //save data in location variable 
                     setLocation(json);
                     // After setting location data in state, save it to AsyncStorage
                     AsyncStorage.setItem('locationData', JSON.stringify(json));
