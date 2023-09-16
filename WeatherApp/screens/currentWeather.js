@@ -236,14 +236,14 @@ const styles = StyleSheet.create({
         borderRadius:10,
         paddingVertical:15,
         marginTop:10,
-        paddingHorizontal:9,
+        
     },
     smallCurrentTempContainer:{
         backgroundColor:'rgba(52, 52, 52, 0.3)',
         borderRadius:10,
         paddingVertical:15,
         marginTop:10,
-        paddingHorizontal:85,
+        paddingHorizontal:75,
         marginBottom:10,
         
     },
