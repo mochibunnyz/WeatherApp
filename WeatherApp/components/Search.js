@@ -11,7 +11,7 @@ function WeatherSearch({fetchWeatherData}){
           Alert.alert('Empty Field', 'Please enter a city or country name to search for weather.');
         } else {
           // Call the fetchWeatherData function with the entered city name.
-          fetchWeatherData(cityName);
+          fetchWeatherData(cityName.trim());
         }
     };
 

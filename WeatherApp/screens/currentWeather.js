@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from "expo-notifications";
 import { schedulePushNotification, scheduleWeatherNotification } from '../util/handle-local-notification';
 import { useLocalNotification } from "../util/useLocalNotification";
+import { ChangeBackground } from '../components/background';
 
 
 Notifications.setNotificationHandler({
@@ -74,7 +75,9 @@ function Weather({navigation}){
                     if (savedLocationData) {
                         // If location data is found in AsyncStorage, parse and set it
                         setLocation(JSON.parse(savedLocationData));
-                        let newWeather= ChangeBackground(JSON.parse(savedBackgroundImage));
+                        //let newWeather= ChangeBackground(JSON.parse(savedBackgroundImage));
+                        const imageSource = ChangeBackground(JSON.parse(savedBackgroundImage));
+                        setBackgroundImage(imageSource);
                         //set pushNotification
                         scheduleWeatherNotification(location.weather[0].main);
                         
@@ -95,7 +98,9 @@ function Weather({navigation}){
                     AsyncStorage.setItem('locationData', JSON.stringify(json));
                     // Determine the background image based on weather condition
                     const weatherCondition = json.weather[0].main.toLowerCase();
-                    let newWeather = ChangeBackground(weatherCondition);
+                   
+                    const imageSource = ChangeBackground(weatherCondition);
+                    setBackgroundImage(imageSource);
                     AsyncStorage.setItem('BackgroundData',  JSON.stringify(weatherCondition));
                     //setPushreminder
                     // Schedule a notification based on the weather condition
@@ -143,35 +148,6 @@ function Weather({navigation}){
         }
     };
 
-    function ChangeBackground(weatherCondition){
-        switch (weatherCondition) {
-            case 'clear':
-                setBackgroundImage(require('../assets/Images/clear.jpg'));
-                break;
-            case 'clouds':
-                setBackgroundImage(require('../assets/Images/cloudy3.jpg'));
-                break;
-            case 'rain':
-                setBackgroundImage(require('../assets/Images/rain.jpg'));
-                break;
-
-            case 'thunderstorm':
-                setBackgroundImage(require('../assets/Images/thunderstorm.jpg'));
-                break;
-            
-            case 'drizzle':
-                setBackgroundImage(require('../assets/Images/drizzle.jpg'));
-                break;
-
-            case 'snow':
-                setBackgroundImage(require('../assets/Images/snow.jpg'));
-                break;
-            // Add more cases for other weather conditions
-            default:
-              setBackgroundImage(require('../assets/Images/clear.jpg'));
-        }
-        return weatherCondition;
-    }
 
     
     if(location == null){

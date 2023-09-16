@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { FontAwesome5,MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
-import moment from 'moment-timezone';
-import { formatSunTime } from "./time";
+//import { formatSunTime, formatDateTime } from "./time";
+import { formatSunTime,formatDateTime } from "../util/date";
 
 
 const ExtraInfo = ({weatherData}) =>{
@@ -11,12 +11,13 @@ const ExtraInfo = ({weatherData}) =>{
 
     const sunriseTime = formatSunTime(weatherData.sys.sunrise, weatherData.timezone);
     const sunsetTime = formatSunTime(weatherData.sys.sunset, weatherData.timezone);
-
+    const time = formatDateTime(weatherData.dt,weatherData.timezone);
 
 
     return(
         <View style={styles.extraInfoContainer}>
             <Text style={styles.title}>More Information</Text>
+            <Text style={styles.dateTimeText}>Data last retrieved: {time}</Text>
 
             {/* 1st row */}
             <View style={styles.row}>
@@ -147,10 +148,19 @@ const styles = StyleSheet.create({
         padding:10,
 
     },
+    dateTimeText:{
+        marginLeft:10,
+        fontSize:15,
+        fontWeight:'200',
+        color:'white',
+        marginBottom:10
+
+    },
     headerContainer:{
         flexDirection: "row",
         justifyContent: "flex-start",
         paddingVertical:10,
+        
     },
     text:{
         color:'white',
