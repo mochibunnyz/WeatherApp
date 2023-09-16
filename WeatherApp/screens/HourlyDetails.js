@@ -1,40 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet,ImageBackground,Image, ScrollView } from 'react-native';
 import HourlyInfo from '../components/HourlyInfo';
 import { toTimeSlice, getFormattedDate } from '../util/date';
+import { ChangeBackground } from '../components/background';
 
 function HourlyDetails({ route }){
-  const { forecastData} = route.params; // Get the selected forecast data from route param
-  
-  return (
-    <View style={styles.container}>
-        <ImageBackground
-            source = {require('../assets/Images/clear.jpg')}
-            style={styles.backgroundImage} 
-            resizeMode="cover"
-            imageStyle={{opacity: 0.7}}
-        >
-            {/* Display the details of the selected forecast */}
-            <View style={styles.mainDetail}>
-                <Text style={[styles.dateText]}>{getFormattedDate(forecastData.time)}</Text>
-                <View style={styles.tempContainer}>
-                    <Text style={styles.tempText}>{(forecastData.temp).toFixed(1)} °C</Text>
-                    <Image
-                        source={{uri:`https://openweathermap.org/img/wn/${forecastData.icon}@2x.png`}}
-                        style={styles.smallIcon}
-                    />
+    const { forecastData} = route.params; // Get the selected forecast data from route param
+    const [backgroundImage, setBackgroundImage] = useState(null);
 
+    useEffect(() => {
+        const weatherCondition = (forecastData.weatherCondition).toLowerCase();
+        const imageSource = ChangeBackground(weatherCondition);
+        //set background
+        setBackgroundImage(imageSource);
+    }, [forecastData.weatherCondition]);
+    return (
+        <View style={styles.container}>
+            <ImageBackground
+                //source = {require('../assets/Images/clear.jpg')}
+                source = {backgroundImage}
+                style={styles.backgroundImage} 
+                resizeMode="cover"
+                imageStyle={{opacity: 0.7}}
+            >
+                {/* Display the details of the selected forecast */}
+                <View style={styles.mainDetail}>
+                    <Text style={[styles.dateText]}>{getFormattedDate(forecastData.time)}</Text>
+                    <View style={styles.tempContainer}>
+                        <Text style={styles.tempText}>{(forecastData.temp).toFixed(1)} °C</Text>
+                        <Image
+                            source={{uri:`https://openweathermap.org/img/wn/${forecastData.icon}@2x.png`}}
+                            style={styles.smallIcon}
+                        />
+
+                    </View>
+                    <Text style={[styles.dateText]}>{toTimeSlice(forecastData.time)}</Text>
+                    
                 </View>
-                <Text style={[styles.dateText]}>{toTimeSlice(forecastData.time)}</Text>
+                <ScrollView>
+                    <HourlyInfo forecastData={forecastData}/>
+                </ScrollView>
                 
-            </View>
-            <ScrollView>
-                <HourlyInfo forecastData={forecastData}/>
-            </ScrollView>
-            
-        </ImageBackground>
-    </View>
-  );
+            </ImageBackground>
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({

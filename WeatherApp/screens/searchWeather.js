@@ -5,7 +5,10 @@ import ErrorOverlay from '../UI/ErrorOverlay';
 import LoadingOverlay from '../UI/LoadingOverlay';
 import ExtraInfo from '../components/extraInfo';
 import WeatherSearch from '../components/Search';
-import { formatSunTime, formatDateTime  } from '../components/time';
+
+import { formatDateWithTimezoneOffset } from '../util/date';
+import { ChangeBackground } from '../components/background';
+
 
 
 
@@ -14,30 +17,37 @@ function SearchWeather(){
     const[loaded, setLoaded] = useState(false);
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [isScrolling, setIsScrolling] = useState(false); // State to track scrolling
-
+    const[dataFetched, setDataFetched] = useState(false);
 
 
     //add function to fetch weather data
     const fetchWeatherData = async(cityName)=>{
         try{
             setLoaded(false);
+            setDataFetched(false);
             
             const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`);
             if (response.status == 200){
                 const data = await response.json();
                 setWeatherData(data);
                 const weatherCondition = data.weather[0].main.toLowerCase();
-                let newWeather = ChangeBackground(weatherCondition);
+                
+                // Use the ChangeBackground function to get the background image
+                const imageSource = ChangeBackground(weatherCondition);
+                setBackgroundImage(imageSource);
+                setDataFetched(true);
                 
             }
             else if (response.status === 404) {
                 // Handle the case where the location (city) is not found.
                 setWeatherData(null);
+                setDataFetched(true);
                 // Inform the user that the location is not valid.
                 Alert.alert('Invalid Location', 'The city or country you entered was not found.');
             }
             else{
                 setWeatherData(null);
+                
             }
             setLoaded(true);
         }
@@ -45,6 +55,7 @@ function SearchWeather(){
             console.log(error);
             // Handle network or other unexpected errors.
             setWeatherData(null);
+            setDataFetched(true);
             // Display an error message to the user.
             
         }
@@ -65,45 +76,17 @@ function SearchWeather(){
             setIsScrolling(false);
         }
     };
-
+    function getTime(){
+        const time = formatDateWithTimezoneOffset(weatherData.timezone);
+        return time;
+    }
     
 
     //if data not loaded, show loading overlay
     if(!loaded){
         return <LoadingOverlay/>
     }
-    function ChangeBackground(weatherCondition){
-        switch (weatherCondition) {
-            case 'clear':
-                setBackgroundImage(require('../assets/Images/clear.jpg'));
-                break;
-            case 'clouds':
-                setBackgroundImage(require('../assets/Images/cloudy3.jpg'));
-                break;
-            case 'rain':
-                setBackgroundImage(require('../assets/Images/rain.jpg'));
-                break;
-
-            case 'thunderstorm':
-                setBackgroundImage(require('../assets/Images/thunderstorm.jpg'));
-                break;
-            
-            case 'drizzle':
-                setBackgroundImage(require('../assets/Images/drizzle.jpg'));
-                break;
-
-            case 'snow':
-                setBackgroundImage(require('../assets/Images/snow.jpg'));
-                break;
-            // Add more cases for other weather conditions
-            default:
-              setBackgroundImage(require('../assets/Images/clear.jpg'));
-        }
-        return weatherCondition;
-    }
-
-    const time = formatDateTime(weatherData.dt,weatherData.timezone);
-
+    
     
     return(
         <View style={styles.container}>
@@ -129,8 +112,9 @@ function SearchWeather(){
                             {weatherData.name}
                         </Text>
                         <Text style={styles.dateTimeText}>
-                            {time}
+                            {getTime()}
                         </Text>
+                        
                         <View style={styles.tempContainer}>
                             <Image
                                 source={{uri:`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}}
@@ -154,11 +138,18 @@ function SearchWeather(){
                 </View>
 
                 )}
-                {!weatherData && (
+                {!weatherData && dataFetched && (
                     <View style={styles.errorBox}>
                         <Text style={styles.errorMsg}>Please Key in valid City or Country to view weather data</Text>
                     </View>
                 )}
+
+                {!weatherData && !dataFetched && (
+                    <View style={styles.errorBox}>
+                        <Text style={styles.errorMsg}>can't fetch data from API</Text>
+                    </View>
+                )}
+                
                 
                 
             </ImageBackground>
@@ -190,6 +181,13 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         marginTop:60
+    },
+    dateTimeText:{
+        fontSize:15,
+        fontWeight:'200',
+        color:'white',
+        textAlign:'center'
+
     },
     
     title:{
@@ -226,13 +224,7 @@ const styles = StyleSheet.create({
         color:'white',
 
     },
-    dateTimeText:{
-        textAlign:"center",
-        fontSize:15,
-        fontWeight:'200',
-        color:'white',
-
-    },
+    
     bigIcon:{
         width:150, 
         height:150,

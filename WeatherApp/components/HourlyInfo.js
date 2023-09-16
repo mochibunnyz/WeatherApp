@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
-import { FontAwesome5,MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5,MaterialCommunityIcons, MaterialIcons, Feather } from '@expo/vector-icons';
 
 const HourlyInfo = ({forecastData}) =>{
 
+   
     return(
         <View style={styles.extraInfoContainer}>
             <Text style={styles.title}>Forecast: {forecastData.description}</Text>
@@ -106,11 +107,39 @@ const HourlyInfo = ({forecastData}) =>{
                         <FontAwesome5 name="wind" size={17} color="rgba(255, 255, 255, 0.6)" />
                         <Text style={styles.header}>Wind Gust</Text>
                     </View>
-                    <Text style={styles.text}>{forecastData.visibility} m/s</Text>
+                    <Text style={styles.text}>{forecastData.gust} m/s</Text>
                 </View>
                 
 
             </View>
+            {/* 5th row */}
+            <View style={styles.row}>
+                {/* sunrise  */}
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <Feather name="sunrise" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Sunrise</Text>
+                    </View>
+                    <Text style={styles.text}>{forecastData.sunrise} </Text>
+                </View>
+                
+
+                {/* Sunset  */}
+                
+                <View style={styles.infoContainer}>
+                    <View style={styles.headerContainer}>
+                        <Feather name="sunset" size={17} color="rgba(255, 255, 255, 0.6)" />
+                        <Text style={styles.header}>Sunset</Text>
+                    </View>
+                    <Text style={styles.text}>{forecastData.sunset}</Text>
+                </View>
+                
+
+            </View>
+
+
+            
         </View>
     );
 }
@@ -120,7 +149,8 @@ const styles = StyleSheet.create({
 
     extraInfoContainer:{
         flex:1,
-        marginTop:30
+        marginTop:30,
+        paddingBottom:30,
     },
     row:{
         flexDirection: "row",

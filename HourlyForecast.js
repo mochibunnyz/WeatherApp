@@ -13,60 +13,51 @@ import { useNavigation } from '@react-navigation/native';
 function HourlyForecast(){
     //const [forecastData, setForecastData]  = useState([]);
     const[hourlyData,setHourlyData]= useState([])
-    const [isLoading, setIsLoading] = useState(true);
     // Initialize navigation hook
     const navigation = useNavigation(); 
     
 
     useEffect(() => {
         const fetchData = async () => {
-          try {
-            const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
-            const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${apiKey}&units=metric`);
-            const json = await response.json();
-            const { sunrise, sunset, timezone } = json.city;
-            const sunriseDate = formatSunTime(sunrise, timezone);
-            const sundownDate = formatSunTime(sunset, timezone);
-            const hourlyForecastData = json.list.map((item) => ({
-              time: item.dt_txt,
-              temp: item.main.temp,
-              description: item.weather[0].description,
-              icon: item.weather[0].icon,
-              humidity: item.main.humidity,
-              feelsLike: item.main.feels_like,
-              visibility: item.visibility,
-              wind: item.wind.speed,
-              weatherCondition: item.weather[0].main,
-              minTemp: item.main.temp_min,
-              maxTemp: item.main.temp_max,
-              gust: item.wind.gust,
-              clouds: item.clouds.all,
-              sunrise: sunriseDate,
-              sunset: sundownDate,
-              timezone: timezone,
-            }));
-    
-            setHourlyData(hourlyForecastData);
-            setIsLoading(false);
-    
-            // Store the data in AsyncStorage
-            await AsyncStorage.setItem('hourlyData', JSON.stringify(hourlyForecastData));
-          } 
-          catch (error) 
-          {
-            console.error('Error fetching or storing hourly forecast data:', error);
-    
-            // If the API call fails, try to retrieve data from AsyncStorage
+            
+           
             try {
-            const storedHourlyData = await AsyncStorage.getItem('hourlyData');
-            if (storedHourlyData) {
-                setHourlyData(JSON.parse(storedHourlyData));
+                //get current location of user
+                const loc = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+                //fetch data from api using current location
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${loc.coords.latitude}&lon=${loc.coords.longitude}&appid=${apiKey}&units=metric`);
+                const json = await response.json();
+                //console.log(json);
+                const { sunrise, sunset, timezone } = json.city;
+                const sunriseDate= formatSunTime(sunrise,timezone);
+                const sundownDate = formatSunTime(sunset, timezone);
+                const hourlyForecastData = json.list.map((item) => ({
+                    time: item.dt_txt,
+                    temp: item.main.temp,
+                    description: item.weather[0].description,
+                    icon: item.weather[0].icon,
+                    humidity: item.main.humidity,
+                    feelsLike: item.main.feels_like,
+                    visibility:item.visibility,
+                    wind: item.wind.speed,
+                    weatherCondition: item.weather[0].main,
+                    minTemp: item.main.temp_min,
+                    maxTemp: item.main.temp_max,
+                    gust: item.wind.gust,
+                    clouds: item.clouds.all,
+                    sunrise:sunriseDate,
+                    sunset:sundownDate,
+                    timezone:timezone
+
+                }));
+
+                //save data in HourlyData 
+                setHourlyData(hourlyForecastData);
+                
+                
+            } catch (error) {
+                console.error('Error fetching hourly forecast data:', error);
             }
-            } catch (storageError) {
-            console.error('Error retrieving data from AsyncStorage:', storageError);
-            }
-            setIsLoading(false);
-          }
         };
     
         fetchData();
