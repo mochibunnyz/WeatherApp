@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         paddingVertical:15,
         marginTop:20,
         paddingHorizontal:2,
-        marginHorizontal:13
+        marginHorizontal:17
         
     },
     smallCurrentTempContainer:{
@@ -212,9 +212,9 @@ const styles = StyleSheet.create({
         borderRadius:10,
         paddingVertical:15,
         marginTop:20,
-        paddingHorizontal:85,
+        paddingHorizontal:75,
         marginBottom:10,
-        marginHorizontal:13
+        marginHorizontal:17
         
     },
     locationText:{
@@ -266,24 +266,6 @@ const styles = StyleSheet.create({
         justifyContent:'flex-start',
         alignItems: 'center',
     },
-    forecastContainer:{
-        marginTop:20,
-        minHeight:150,
-        marginHorizontal:5,
-        backgroundColor:'rgba(52, 52, 52, 0.5)',
-        borderRadius:10,
-        justifyContent:'center',
-        alignItems:'center'
-    },
-    ButtonStyle:{
-        borderColor:'white',
-        borderWidth:1,
-        borderRadius:20,
-        padding:10
-    },
-    buttonText:{
-        color:'white'
-    },
-    
+
     
 });

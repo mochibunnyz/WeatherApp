@@ -19,7 +19,7 @@ function BottomTabs(){
     screenOptions={{
       tabBarStyle: { position: 'absolute' },
       headerShown: false ,
-      tabBarStyle:{backgroundColor:'black', height:90, paddingTop:20,  },
+      tabBarStyle:{backgroundColor:'black', height:90, paddingBottom:20,  },
       tabBarActiveTintColor: 'white',
     }}> 
       {/* current weather page */}
